@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "d3": "^5.7.0",
     "lodash": "^4.17.11",
     "papaparse": "^4.6.3",
     "prop-types": "^15.6.2",

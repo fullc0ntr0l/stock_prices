@@ -4,15 +4,23 @@ import {QuandlClient} from "./lib/quandlClient";
 import CompanySelect from "./containers/companySelect";
 import ChartSelect from "./containers/chartSelect";
 import PeriodSelect from "./containers/periodSelect";
+import LineChart from "./components/lineChart";
+import BarChart from "./components/barChart";
 
 import "semantic-ui-css/semantic.min.css";
 import "./index.css";
 
-export const quandlClient = new QuandlClient();
+const chartTypes = [{key: "line", value: "line", text: "Line chart"}, {key: "bar", value: "bar", text: "Bar chart"}];
+
+export const quandlClient = new QuandlClient(process.env.REACT_APP_QUANDL_API_KEY);
 
 class App extends Component {
   state = {
     companiesList: [],
+    companyCode: null,
+    chartType: chartTypes[0].value,
+    datesRange: "",
+    data: null,
     isLoading: true,
   };
 
@@ -24,11 +32,12 @@ class App extends Component {
     return (
       <div className="application">
         <header>
-          <CompanySelect companiesList={this.state.companiesList} />
-          <ChartSelect />
-          <PeriodSelect />
+          <CompanySelect companiesList={this.state.companiesList} onChange={this.handleSelectCode} />
+          <ChartSelect value={this.state.chartType} options={chartTypes} onChange={this.handleChangeChartType} />
+          <PeriodSelect value={this.state.datesRange} onChange={this.handleChangeRange} />
         </header>
         <div>{this.renderLoader()}</div>
+        <div className="chart-container">{this.renderChart()}</div>
       </div>
     );
   }
@@ -42,6 +51,25 @@ class App extends Component {
       );
     }
   }
+
+  renderChart() {
+    if (!this.state.data) return;
+
+    switch (this.state.chartType) {
+      case "line":
+        return <LineChart dataset={this.state.data} />;
+      case "bar":
+        return <BarChart dataset={this.state.data} />;
+      default:
+        return;
+    }
+  }
+
+  handleSelectCode = companyCode => this.setState({companyCode}, this.getChartData);
+
+  handleChangeChartType = chartType => this.setState({chartType});
+
+  handleChangeRange = datesRange => this.setState({datesRange}, this.getChartData);
 
   getCompanies() {
     quandlClient.getCompanies().then(result => {
@@ -60,6 +88,17 @@ class App extends Component {
 
       this.setState({companiesList, isLoading: false});
     });
+  }
+
+  getChartData() {
+    if (this.state.companyCode) {
+      this.setState({isLoading: true}, () => {
+        const [startDate, endDate] = this.state.datesRange.split(" - ");
+        quandlClient.getAdjCloseTimeseries(this.state.companyCode, startDate, endDate).then(data => {
+          this.setState({isLoading: false, data});
+        });
+      });
+    }
   }
 }
 

@@ -6,6 +6,7 @@ import {Search} from "semantic-ui-react";
 export default class CompanySelect extends Component {
   static propTypes = {
     companiesList: PropTypes.array,
+    onChange: PropTypes.func,
   };
 
   state = {
@@ -28,11 +29,16 @@ export default class CompanySelect extends Component {
 
   resetState = () => this.setState({isLoading: false, results: [], value: ""});
 
-  handleResultSelect = (_, {result}) => this.setState({value: result.name});
+  handleResultSelect = (_, {result}) => {
+    this.setState({value: result.name});
+
+    if (this.props.onChange) this.props.onChange(result.name);
+  };
 
   handleSearchChange = (_, {value}) => {
     this.setState({value, isLoading: true}, () => {
       if (this.state.value.length < 1) return this.resetState();
+      if (this.state.value.length < 2) return;
 
       const re = new RegExp(lodash.escapeRegExp(this.state.value), "i");
       const isMatch = result => re.test(result.name);

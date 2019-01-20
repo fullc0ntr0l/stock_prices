@@ -1,20 +1,25 @@
 import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {Select} from "semantic-ui-react";
 
-const cartTypes = [{key: "bar", value: "bar", text: "Bar chart"}, {key: "line", value: "line", text: "Line chart"}];
-
 export default class ChartSelect extends Component {
-  state = {
-    value: null,
+  static propTypes = {
+    value: PropTypes.string,
+    options: PropTypes.array,
   };
 
   render() {
-    return <Select placeholder="Chart type" options={cartTypes} onChange={this.handleChange} />;
+    return (
+      <Select
+        placeholder="Chart type"
+        options={this.props.options}
+        onChange={this.handleChange}
+        value={this.props.value}
+      />
+    );
   }
 
-  handleChange = event => {
-    this.setState({value: event.target.value});
-
-    if (this.props.onChange) this.props.onChange(event.target.value);
+  handleChange = (_, {value}) => {
+    if (this.props.onChange) this.props.onChange(value);
   };
 }

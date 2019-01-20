@@ -18,6 +18,10 @@ code {
 }
 
 .application header > * {
-  margin: 0 1%;
+  margin: 1%;
   display: inline-block;
+}
+
+.application .chart-container {
+  margin: 4% 1%;
 }

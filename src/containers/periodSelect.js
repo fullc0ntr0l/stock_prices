@@ -5,6 +5,7 @@ import {DatesRangeInput} from "semantic-ui-calendar-react";
 export default class PeriodSelect extends Component {
   static propTypes = {
     onChange: PropTypes.func,
+    value: PropTypes.string,
   };
 
   state = {
@@ -14,12 +15,12 @@ export default class PeriodSelect extends Component {
   render() {
     return (
       <DatesRangeInput
-        dateFormat="DD.MM.YY"
+        dateFormat="YYYY-MM-DD"
         placeholder="From - To"
         popupPosition="bottom right"
         closable
         clearable
-        value={this.state.datesRange}
+        value={this.props.value}
         iconPosition="left"
         autoComplete="off"
         onChange={this.handleChange}
@@ -28,8 +29,6 @@ export default class PeriodSelect extends Component {
   }
 
   handleChange = (_, {value}) => {
-    this.setState({datesRange: value});
-
     if (this.props.onChange) this.props.onChange(value);
   };
 }
