@@ -7,7 +7,8 @@ Show EOD stock prices using [quandl API](https://www.quandl.com/)
 ```bash
   git clone git@github.com:fullc0ntr0l/stock_prices.git
   cd stock_prices
-  npm install
+  nvm use
+  yarn install
 ```
 
 You need to setup `quandl` api key before running the application:
@@ -20,7 +21,7 @@ You need to setup `quandl` api key before running the application:
 Run the application
 
 ```bash
-  npm start
+  yarn start
 ```
 
 Now you can view the page at [http://localhost:3000/](http://localhost:3000/)
