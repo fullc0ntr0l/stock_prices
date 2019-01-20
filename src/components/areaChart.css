@@ -1,0 +1,7 @@
+.area-chart {
+  text-align: center;
+}
+
+.area-chart svg {
+  border: 1px solid lightgray;
+}

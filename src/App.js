@@ -5,20 +5,23 @@ import CompanySelect from "./containers/companySelect";
 import ChartSelect from "./containers/chartSelect";
 import PeriodSelect from "./containers/periodSelect";
 import LineChart from "./components/lineChart";
-import BarChart from "./components/barChart";
+import AreaChart from "./components/areaChart";
 
 import "semantic-ui-css/semantic.min.css";
 import "./index.css";
 
-const chartTypes = [{key: "line", value: "line", text: "Line chart"}, {key: "bar", value: "bar", text: "Bar chart"}];
+const chartTypes = [
+  {key: "close", value: "close", text: "Close price"},
+  {key: "volume", value: "volume", text: "Volume"},
+];
 
 export const quandlClient = new QuandlClient(process.env.REACT_APP_QUANDL_API_KEY);
 
 class App extends Component {
   state = {
     companiesList: [],
-    companyCode: null,
-    chartType: chartTypes[0].value,
+    companyCode: "AAPL",
+    chartType: chartTypes[1].value,
     datesRange: "",
     data: null,
     isLoading: true,
@@ -26,6 +29,7 @@ class App extends Component {
 
   componentWillMount() {
     this.getCompanies();
+    this.getChartData();
   }
 
   render() {
@@ -56,10 +60,10 @@ class App extends Component {
     if (!this.state.data) return;
 
     switch (this.state.chartType) {
-      case "line":
+      case "close":
         return <LineChart dataset={this.state.data} />;
-      case "bar":
-        return <BarChart dataset={this.state.data} />;
+      case "volume":
+        return <AreaChart dataset={this.state.data} />;
       default:
         return;
     }
@@ -69,9 +73,12 @@ class App extends Component {
 
   handleChangeChartType = chartType => this.setState({chartType});
 
-  handleChangeRange = datesRange => this.setState({datesRange}, this.getChartData);
+  handleChangeRange = datesRange =>
+    this.setState({datesRange}, () => {
+      setTimeout(this.getChartData, 1000);
+    });
 
-  getCompanies() {
+  getCompanies = () => {
     quandlClient.getCompanies().then(result => {
       /*
         The result is from local WIKI_metadata.csv file
@@ -88,9 +95,9 @@ class App extends Component {
 
       this.setState({companiesList, isLoading: false});
     });
-  }
+  };
 
-  getChartData() {
+  getChartData = () => {
     if (this.state.companyCode) {
       this.setState({isLoading: true}, () => {
         const [startDate, endDate] = this.state.datesRange.split(" - ");
@@ -99,7 +106,7 @@ class App extends Component {
         });
       });
     }
-  }
+  };
 }
 
 export default App;
