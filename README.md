@@ -15,7 +15,7 @@ You need to setup `quandl` api key before running the application:
 
 ```bash
 
-  echo "<Your API key>" > .env
+  echo "REACT_APP_QUANDL_API_KEY=<Your API key>" > .env
 ```
 
 Run the application
