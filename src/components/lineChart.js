@@ -11,6 +11,8 @@ export default class LineChart extends Component {
 
   componentDidMount() {
     this.draw(this.props.dataset);
+
+    d3.select(window).on("resize.updatesvg", () => this.draw(this.props.dataset));
   }
 
   componentWillReceiveProps(nextProps) {
@@ -21,6 +23,7 @@ export default class LineChart extends Component {
 
   componentWillUnmount() {
     this.clearChart();
+    d3.select(window).on("resize.updatesvg", null);
   }
 
   render() {
@@ -37,8 +40,8 @@ export default class LineChart extends Component {
     this.clearChart();
 
     const margin = {top: 20, right: 30, bottom: 30, left: 40};
-    const width = 800;
-    const height = 500;
+    const width = window.innerWidth * 0.9;
+    const height = window.innerHeight * 0.6;
     const svg = d3
       .select(".line-chart")
       .append("svg")
