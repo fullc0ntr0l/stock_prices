@@ -18,6 +18,7 @@ export default class CompanySelect extends Component {
   render() {
     return (
       <Search
+        placeholder="Company stock symbol"
         loading={this.state.isLoading}
         results={this.state.results}
         onResultSelect={this.handleResultSelect}

@@ -28,11 +28,11 @@ export class QuandlClient {
     });
   }
 
-  async getAdjCloseTimeseries(code, startDate, endDate) {
+  async getStockData(code, startDate, endDate, columnIndex = 11) {
     const url = this.buildUrl({
       code,
       // columnIndex 11 will fetch data for `Adj Close` column only
-      params: {columnIndex: 11, startDate, endDate},
+      params: {columnIndex, startDate, endDate},
     });
 
     const result = await fetch(url);

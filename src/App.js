@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import lodash from "lodash";
 import {Dimmer, Loader} from "semantic-ui-react";
 import {QuandlClient} from "./lib/quandlClient";
 import CompanySelect from "./containers/companySelect";
@@ -10,18 +11,15 @@ import AreaChart from "./components/areaChart";
 import "semantic-ui-css/semantic.min.css";
 import "./index.css";
 
-const chartTypes = [
-  {key: "close", value: "close", text: "Close price"},
-  {key: "volume", value: "volume", text: "Volume"},
-];
+const chartTypes = [{key: 11, value: "close", text: "Close price"}, {key: 5, value: "volume", text: "Volume"}];
 
 export const quandlClient = new QuandlClient(process.env.REACT_APP_QUANDL_API_KEY);
 
 class App extends Component {
   state = {
     companiesList: [],
-    companyCode: "AAPL",
-    chartType: chartTypes[1].value,
+    companyCode: undefined,
+    chartType: chartTypes[0].value,
     datesRange: "",
     data: null,
     isLoading: true,
@@ -29,7 +27,6 @@ class App extends Component {
 
   componentWillMount() {
     this.getCompanies();
-    this.getChartData();
   }
 
   render() {
@@ -71,7 +68,7 @@ class App extends Component {
 
   handleSelectCode = companyCode => this.setState({companyCode}, this.getChartData);
 
-  handleChangeChartType = chartType => this.setState({chartType});
+  handleChangeChartType = chartType => this.setState({chartType}, this.getChartData);
 
   handleChangeRange = datesRange =>
     this.setState({datesRange}, () => {
@@ -101,11 +98,19 @@ class App extends Component {
     if (this.state.companyCode) {
       this.setState({isLoading: true}, () => {
         const [startDate, endDate] = this.state.datesRange.split(" - ");
-        quandlClient.getAdjCloseTimeseries(this.state.companyCode, startDate, endDate).then(data => {
+        const columnIndex = this.getColumnIndex();
+
+        quandlClient.getStockData(this.state.companyCode, startDate, endDate, columnIndex).then(data => {
           this.setState({isLoading: false, data});
         });
       });
     }
+  };
+
+  getColumnIndex = () => {
+    const type = lodash.find(chartTypes, t => t.value === this.state.chartType);
+
+    return type ? type.key : 11;
   };
 }
 
